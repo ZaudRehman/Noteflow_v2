@@ -1,0 +1,23 @@
+[package]
+name = "backend"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+axum = "0.7"
+tokio = { version = "1", features = ["full"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "postgres", "macros", "uuid", "chrono"] }
+uuid = { version = "1", features = ["v4"] }
+bcrypt = "0.14"
+jsonwebtoken = "9.2"
+dotenv = "0.15"
+tower = "0.4"
+tower-http = { version = "0.3", features = ["cors"] }
+async-trait = "0.1"
+futures = "0.3"
+anyhow = "1.0"
+redis = { version = "0.23.0", features = ["tls-native-tls"] }
+tokio-stream = "0.1"
+tracing = "0.1"
