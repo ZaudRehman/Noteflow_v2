@@ -1,6 +1,6 @@
 # Noteflow_v2 Backend
 
-This is the production-ready backend server for the Noteflow_v2 collaborative note-taking application, built with Rust, Axum, PostgreSQL, and Redis. It provides RESTful APIs for user authentication, note management, and real-time collaboration over WebSocket.
+This is the production-ready backend server for the Noteflow_v2 collaborative note-taking application, built with Rust, Axum 0.8, PostgreSQL, and Redis. It provides RESTful APIs for user authentication, note management, and real-time collaboration over WebSocket.
 
 ---
 
@@ -59,8 +59,6 @@ backend/
    JWT_SECRET=your_jwt_secret_key_here
    ```
 
-   **Note:** URL-encode special characters in passwords.
-
 2. Run database migrations:
 
    ```
@@ -94,18 +92,18 @@ The backend listens on port `8080` by default.
   Login with `{ "username": "...", "password": "..." }`. Returns JWT token.
 - **POST** `/api/notes`  
   Create a new note. Requires JWT auth.
-- **GET** `/api/notes/:user_id`  
+- **GET** `/api/users/{user_id}/notes`  
   Fetch user's notes.
-- **GET/PUT/DELETE** `/api/notes/:note_id`  
+- **GET/PUT/DELETE** `/api/notes/{note_id}`  
   Read, update, or delete note by ID.
-- **GET** `/api/notes/:note_id/ws`  
+- **GET** `/api/notes/{note_id}/ws`  
   WebSocket endpoint for real-time collaborative editing.
 
 ---
 
 ## WebSocket Collaboration Protocol
 
-- Clients connect to `/api/notes/:note_id/ws`.
+- Clients connect to `/api/notes/{note_id}/ws`.
 - Messages sent or received follow the simple string format:  
   `"note_id:content"`
 - Messages are broadcasted to all connected clients on the note.

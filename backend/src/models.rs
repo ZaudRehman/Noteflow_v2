@@ -1,12 +1,13 @@
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
-use chrono::{DateTime, Utc};
 
 /// Represents a user in the system. (Password not included)
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct User {
     /// Unique identifier for the user
     pub id: Uuid,
+    /// Unique username
     pub username: String,
 }
 
@@ -23,15 +24,16 @@ pub struct Note {
     pub body: String,
     /// Revision count to track versions or updates
     pub revision: i64,
-    /// Tags associated with the note for categorization
-    pub tags: Vec<String>,
+    /// Tags associated with the note for categorization (TEXT[] in Postgres)
+    /// Kept as Option<Vec<String>> to match sqlx's mapping for array columns.
+    pub tags: Option<Vec<String>>,
     /// Timestamp when the note was created
     pub created_at: DateTime<Utc>,
     /// Timestamp of last update to the note
     pub updated_at: DateTime<Utc>,
 }
 
-/// Represents a single revision/version of a note (body only - for viewing history and reverting changes).
+/// Represents a single revision/version of a note (body snapshot).
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Revision {
     /// Unique identifier for the revision
@@ -53,6 +55,6 @@ pub struct Claims {
     pub sub: Uuid,
     /// Username of the authenticated user
     pub username: String,
-    /// Expiration timestamp for token validity
+    /// Expiration timestamp for token validity (Unix seconds)
     pub exp: i64,
 }

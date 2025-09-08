@@ -3,10 +3,8 @@ use axum::{
     response::IntoResponse,
     Extension,
 };
-use futures::{sink::SinkExt, stream::StreamExt};
-use std::collections::HashMap;
-use tokio::sync::{broadcast, Mutex};
-use std::sync::Arc;
+use futures::stream::StreamExt;
+use tokio::sync::broadcast;
 use uuid::Uuid;
 
 #[derive(Clone, Debug)]
@@ -17,46 +15,51 @@ pub enum WsMessage {
 type Tx = broadcast::Sender<WsMessage>;
 type Rx = broadcast::Receiver<WsMessage>;
 
-pub async fn note_ws(
-    ws: WebSocketUpgrade,
-    Extension(tx): Extension<Tx>,
-) -> impl IntoResponse {
+pub async fn note_ws(ws: WebSocketUpgrade, Extension(tx): Extension<Tx>) -> impl IntoResponse {
     ws.on_upgrade(move |socket| handle_socket(socket, tx))
 }
 
 async fn handle_socket(mut socket: WebSocket, tx: Tx) {
-    let mut rx = tx.subscribe();
+    let mut rx: Rx = tx.subscribe();
 
     loop {
         tokio::select! {
-            // Incoming messages from Websocket client
-            Some(Ok(msg)) = socket.next() => {
-                if let Message::Text(text) = msg {
-                    // messages in format: "note_id:content"
-                    if let Some((note_id_str, content)) = text.split_once(':') {
-                        if let Ok(note_id) = Uuid::parse_str(note_id_str) {
-                            let broadcast_msg = WsMessage::Sync {
-                                note_id,
-                                content: content.to_string(),
-                            };
-                            // Send to all subscribers (including sender)
-                            let _ = tx.send(broadcast_msg);
+            // Incoming messages from the WebSocket client
+            incoming = socket.recv() => {
+                match incoming {
+                    Some(Ok(msg)) => {
+                        if let Message::Text(text) = msg {
+                            // Expected incoming format: "note_id:content"
+                            if let Some((note_id_str, content)) = text.split_once(':') {
+                                if let Ok(note_id) = Uuid::parse_str(note_id_str) {
+                                    let _ = tx.send(WsMessage::Sync {
+                                        note_id,
+                                        content: content.to_string(),
+                                    });
+                                }
+                            }
+                        } else if let Message::Close(_) = msg {
+                            break;
                         }
                     }
-                } else if let Message::Close(_) = msg {
-                    break;
+                    // Client disconnected or error
+                    _ => break,
                 }
             }
-            // Received broadcast messages (sent by other clients)
-            Ok(msg) = rx.recv() => {
-                if let WsMessage::Sync { note_id, content } = msg {
-                    let msg_text = format!("{}:{}", note_id, content);
-                    if socket.send(Message::Text(msg_text)).await.is_err() {
-                        break;
+
+            // Broadcast messages from other clients
+            broadcasted = rx.recv() => {
+                match broadcasted {
+                    Ok(WsMessage::Sync { note_id, content }) => {
+                        let msg_text = format!("{}:{}", note_id, content);
+                        // axum 0.8 expects Utf8Bytes for Message::Text; .into() converts String
+                        if socket.send(Message::Text(msg_text.into())).await.is_err() {
+                            break;
+                        }
                     }
+                    Err(_) => break,
                 }
             }
-            else => break,
         }
     }
 }
