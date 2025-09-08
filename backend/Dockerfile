@@ -1,26 +1,42 @@
-# Stage 1: Build
-FROM rust:1.75 as builder
+# ---------- Stage 1: Build ----------
+FROM rust:1.75 AS builder
 WORKDIR /usr/src/app
 
-# Copy source code
-COPY ./backend/Cargo.toml ./backend/Cargo.lock ./backend/
-COPY ./backend/src ./backend/src
-
+# Cache deps first to speed up rebuilds
+COPY backend/Cargo.toml backend/Cargo.lock backend/
+# Create a dummy main to cache dependency compile
+RUN mkdir -p backend/src && echo "fn main() {}" > backend/src/main.rs
 WORKDIR /usr/src/app/backend
+RUN cargo build --release || true
 
-# Build release binary
+# Now copy real source and build
+RUN rm -f src/main.rs
+COPY backend/src ./src
 RUN cargo build --release
 
-# Stage 2: Runtime
-FROM debian:buster-slim
-WORKDIR /usr/src/app
+# ---------- Stage 2: Runtime ----------
+# Use a slim base and install minimal TLS + certs
+FROM debian:bullseye-slim
+WORKDIR /app
 
-# Copy binary and .env
-COPY --from=builder /usr/src/app/backend/target/release/noteflow_v2_backend ./noteflow_v2_backend
-COPY ./backend/.env .env
+# Install OpenSSL runtime & CA certs for TLS (Redis rediss://) and DNS, then clean
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ca-certificates openssl libc6 \
+    && update-ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
-# Expose port 8080 to host
+# Copy the release binary from builder
+# Adjust the binary name if your Cargo package name differs
+COPY --from=builder /usr/src/app/backend/target/release/backend ./backend
+
+# Non-root user (optional but recommended)
+RUN useradd -u 10001 -r -s /usr/sbin/nologin appuser \
+    && chown appuser:appuser /app/backend
+USER appuser
+
+# Expose port
 EXPOSE 8080
 
-# Run the backend server
-CMD ["./noteflow_v2_backend"]
+# Environment is passed at runtime; don't bake .env into the image
+# Run
+ENTRYPOINT ["./backend"]
