@@ -1,0 +1,130 @@
+/* globals.css - Global styles including resets, typography, and neumorphic base */
+
+/* Import Tailwind base styles */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Reset and base */
+html, body, #__next {
+  height: 100%;
+  background-color: var(--color-parchmentLight);
+  font-family: 'Inter', sans-serif;
+  color: var(--color-charcoal);
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Neumorphic shadows (light mode) */
+:root {
+  --color-parchmentLight: #f7f3ed;
+  --color-whiteSmoke: #f5f5f7;
+  --color-charcoal: #334155;
+  --color-indigoPulse: #4f46e5;
+  --color-pinkPastel: #f9a8d4;
+  --color-mintPastel: #a3ffd6;
+  --color-shadowLight: rgba(255, 255, 255, 0.8);
+  --color-shadowDark: rgba(0, 0, 0, 0.1);
+  --font-inter: 'Inter', sans-serif;
+  --font-roboto-slab: 'Roboto Slab', serif;
+}
+
+/* Background subtle grid pattern */
+body {
+  background-color: #f7f3ed;
+  font-family: var(--font-inter);
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  font-family: var(--font-roboto-slab);
+}
+
+p {
+  line-height: 1.6;
+}
+
+/* Links */
+a {
+  color: var(--color-indigoPulse);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover,
+a:focus {
+  color: var(--color-pinkPastel);
+  outline: none;
+}
+
+/* Neumorphic cards */
+.card, .neumorphic {
+  background: var(--color-whiteSmoke);
+  border-radius: 2rem;
+  box-shadow:
+    8px 8px 15px var(--color-shadowDark),
+    -8px -8px 15px var(--color-shadowLight);
+  padding: 1rem;
+  transition: box-shadow 0.3s ease;
+}
+
+/* Pressed state */
+.card:active, .neumorphic:active {
+  box-shadow:
+    inset 8px 8px 15px var(--color-shadowDark),
+    inset -8px -8px 15px var(--color-shadowLight);
+}
+
+/* Scrollbars (light) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-parchmentLight);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-indigoPulse);
+  border-radius: 2rem;
+}
+
+/* Responsive spacing */
+.container {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* Dark mode variables to be toggled by .dark class on html or body */
+.dark {
+  --color-parchmentDark: #1e1f22;
+  --color-whiteSmoke: #292a2e;
+  --color-charcoal: #e0e0e0;
+  --color-indigoPulse: #818cf8;
+  --color-pinkPastel: #db2777;
+  --color-mintPastel: #4ade80;
+  --color-shadowLight: rgba(0,0,0,0.8);
+  --color-shadowDark: rgba(255,255,255,0.1);
+  background-color: #1e1f22;
+  color: var(--color-charcoal);
+  font-family: var(--font-inter);
+}
+
+/* Utility classes for neumorphic shadows with Tailwind */
+.shadow-neu {
+  box-shadow:
+    8px 8px 15px var(--color-shadowDark),
+    -8px -8px 15px var(--color-shadowLight);
+}
+
+.shadow-neuInner {
+  box-shadow:
+    inset 8px 8px 15px var(--color-shadowDark),
+    inset -8px -8px 15px var(--color-shadowLight);
+}

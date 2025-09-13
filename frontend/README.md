@@ -1,36 +1,127 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Noteflow Frontend
 
+Welcome to the Noteflow frontend application — a modern, collaborative note-taking app featuring a fresh neumorphic pastel UI inspired by light gradients, soft shadows, and elegant typography.
+
+---
+
+## Features
+
+- **Collaborative Editing:** Real-time multiuser editing using Yjs and WebSocket sync.
+- **AI-powered Insights:** Integrated AI-generated summaries and smart tag suggestions.
+- **Rich Text Editor:** Powered by TipTap with seamless revision history and content sync.
+- **Neumorphic Design:** Soft UI with pastel gradients and layered shadows for a futuristic yet approachable feel.
+- **Theme Support:** Light and dark modes with smooth transitions adapting pastel palettes.
+- **User Profiles & Authentication:** Secure JWT-based login/signup flow with account management.
+- **Responsive Layout:** Central stacked card layouts optimized for desktop and mobile.
+- **Accessible & WCAG-compliant:** High contrast and semantic UI components.
+
+---
+## Project Structure
+
+```
+frontend/
+├── src/
+│ ├── components/         # Reusable React components with neumorphic pastel styling
+│ ├── context/            # React context providers (e.g., AuthContext)
+│ ├── hooks/              # Custom React hooks for auth, API calls, WebSocket, sync, etc.
+│ ├── pages/              # Next.js page routes
+│ │ ├── \_app.tsx         # Main app wrapper with global providers and layout
+│ │ ├── index.tsx         # Dashboard showing notes overview
+│ │ ├── login.tsx         # Login page
+│ │ ├── signup.tsx        # Signup page
+│ │ ├── note/             # Note-related routes
+│ │ │ └── [id].tsx        # Note editing/detail page integrating editor and panels
+│ │ └── settings.tsx      # User settings and theme toggling page
+│ ├── styles/             # Global CSS and Tailwind CSS extensions
+│ ├── types/              # Shared TypeScript types and interfaces
+│ └── utils/              # Utility functions, e.g., date formatting
+├── public/               # Static assets like images and SVG backgrounds
+├── package.json          # npm dependencies and scripts
+├── tailwind.config.js    # Tailwind CSS configuration with theme extensions
+├── postcss.config.js     # PostCSS setup for Tailwind CSS
+├── tsconfig.json         # TypeScript configuration
+├── Dockerfile            # Docker instructions for containerizing frontend
+└── README.md             # Project documentation and instructions
+
+```
+---
 ## Getting Started
 
-First, run the development server:
+### Requirements
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Node.js 18 or higher
+- NPM or Yarn
+- Running backend API compatible with Noteflow frontend
+
+### Installation
+
+Clone this repository and install dependencies:
+```
+npm install
+```
+or
+
+```
+yarn
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Development
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Start the development server:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+npm run dev
+```
 
-## Learn More
+Open your browser at: [http://localhost:3000](http://localhost:3000)
 
-To learn more about Next.js, take a look at the following resources:
+### Building for Production
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+npm run build
+npm run start
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Docker
 
-## Deploy on Vercel
+Build and run your Docker container:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+docker build -t noteflow-frontend .
+docker run -p 3000:3000 noteflow-frontend
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## Styling
+
+Tailwind CSS extended with custom pastel colors and shadows:
+
+- Pastel pink, mint green, lavender, coral accents
+- Neumorphic shadows: layered inset and outset shadows for depth
+- Typography: Inter font with elegant spacing and readability
+- Dark mode: adapted muted pastel shades on charcoal backgrounds
+- Smooth transitions for theme toggling
+
+---
+
+## Contribution & Support
+
+Contributions are welcome!
+
+- Fork the repo
+- Create a feature branch
+- Submit a pull request with descriptive commits
+
+Please follow the existing style guide and code conventions.
+
+For support or questions, contact the maintainer at `zaudrehman@gmail.com`.
+
+---
+
+## License
+
+This project is licensed under the MIT License.
+
+---
+_Powered by Next.js + React + Tailwind CSS – built by Zaud Rehman_
