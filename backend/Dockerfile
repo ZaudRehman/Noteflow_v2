@@ -3,9 +3,9 @@ FROM rust:1.76 AS builder
 WORKDIR /usr/src/app
 
 # Cache deps first to speed up rebuilds
-COPY backend/Cargo.toml backend/Cargo.lock backend/
+COPY backend/Cargo.toml backend/Cargo.lock ./
 # Create a dummy main to cache dependency compile
-RUN mkdir -p backend/src && echo "fn main() {}" > backend/src/main.rs
+RUN mkdir -p src && echo "fn main() {}" > src/main.rs
 WORKDIR /usr/src/app/backend
 RUN cargo build --release || true
 
